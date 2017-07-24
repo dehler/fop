@@ -89,16 +89,18 @@ public final class FontDetectorFactory {
             try {
                 // search in font base if it is defined and
                 // is a directory but don't recurse
-                FontFileFinder fontFileFinder = new FontFileFinder(eventListener);
+                
                 URI fontBaseURI = fontManager.getResourceResolver().getBaseURI();
                 File fontBase = FileUtils.toFile(fontBaseURI.toURL());
                 if (fontBase != null) {
-                    List<URL> fontURLList = fontFileFinder.find(fontBase.getAbsolutePath());
+                    // set depth to 0 to not recurse beyond base directory
+                    FontFileFinder baseFileFinder = new FontFileFinder(0,eventListener);
+                    List<URL> fontURLList = baseFileFinder.find(fontBase.getAbsolutePath());
                     fontAdder.add(fontURLList, fontInfoList);
 
                     //Can only use the font base URL if it's a file URL
                 }
-
+                FontFileFinder fontFileFinder = new FontFileFinder(eventListener);
                 // native o/s font directory finding
                 List<URL> systemFontList;
                 systemFontList = fontFileFinder.find();
